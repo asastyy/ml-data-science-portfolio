@@ -4,6 +4,17 @@ EEG-based target classification for a Steady-State Visual Evoked Potential (SSVE
 
 The project compares frequency-recognition methods for SSVEP signals and evaluates how decision window length affects classification accuracy.
 
+## Tech Stack
+
+**Python** · **NumPy** · **SciPy** · **MNE** · **scikit-learn** · **pandas** · **Matplotlib** · **Jupyter Notebook**
+
+## Highlights
+
+- Compared FFT, CCA and FBCCA for EEG-based SSVEP classification
+- Evaluated accuracy across decision windows from **0.5 to 5.0 seconds**
+- Applied ICA-based preprocessing for eye artifact removal
+- Analyzed subject-level and group-level classification performance
+
 ## Overview
 
 SSVEP-based BCI systems classify a visual target by detecting frequency-specific responses in EEG signals.
@@ -60,12 +71,3 @@ CCA also performed strongly on longer windows, while FFT served as a simple and 
 
 ICA reduced frontal eye-movement artifacts, although its effect on classification accuracy was mixed and depended on the method and window size.
 
-## Tech Stack
-
-**Language:** Python  
-**Signal Processing:** NumPy, SciPy  
-**EEG Processing:** MNE  
-**Machine Learning / Evaluation:** scikit-learn  
-**Data Analysis:** pandas  
-**Visualization:** Matplotlib  
-**Environment:** Jupyter Notebook
