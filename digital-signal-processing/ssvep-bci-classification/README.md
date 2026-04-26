@@ -32,17 +32,12 @@ The analysis is performed across multiple subjects and decision window sizes fro
 
 ## Dataset
 
-The dataset contains EEG recordings from SSVEP stimulation experiments.
+This project uses the **SSVEP Benchmark Dataset**, a public EEG dataset for SSVEP-based brain-computer interface research.
 
-Each subject includes:
+The dataset contains recordings from **35 subjects**, **64 EEG channels**, **40 stimulation frequencies** from **8.0 Hz to 15.8 Hz**, and **6 trials per frequency**.
 
-- 64 EEG channels
-- 250 Hz sampling frequency
-- 40 stimulation frequencies
-- 6 trials per frequency
-- 6-second EEG epochs
-
-The evaluation focuses on **16 selected target frequencies**.
+Dataset: [Kaggle — SSVEP Benchmark Dataset](https://www.kaggle.com/datasets/shabbirmahmood/ssvep-benchmark-dataset)  
+Description: [A Benchmark Dataset for SSVEP-Based Brain-Computer Interfaces](https://ieeexplore.ieee.org/abstract/document/7740878/)
 
 ## Methods
 
@@ -72,4 +67,11 @@ FBCCA reached **1.000 median accuracy** for decision windows of **4.0 seconds an
 CCA also performed strongly on longer windows, while FFT served as a simple and interpretable baseline.
 
 ICA reduced frontal eye-movement artifacts, although its effect on classification accuracy was mixed and depended on the method and window size.
+
+## References
+
+- [SSVEP Benchmark Dataset on Kaggle](https://www.kaggle.com/datasets/shabbirmahmood/ssvep-benchmark-dataset)
+- [A Benchmark Dataset for SSVEP-Based Brain-Computer Interfaces](https://ieeexplore.ieee.org/abstract/document/7740878/)
+- [Filter Bank Canonical Correlation Analysis for SSVEP-Based BCI](https://iopscience.iop.org/article/10.1088/1741-2560/12/4/046008)
+- [MNE: Reading Custom Montages](https://mne.tools/stable/generated/mne.channels.read_custom_montage.html)
 
