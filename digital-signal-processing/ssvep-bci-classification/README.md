@@ -6,7 +6,7 @@ The project compares frequency-recognition methods for SSVEP signals and evaluat
 
 
 
-**Python** · **NumPy** · **SciPy** · **MNE** · **scikit-learn** · **pandas** · **Matplotlib** · **Jupyter Notebook**
+> **Tech Stack:** `Python` · `NumPy` · `SciPy` · `MNE` · `scikit-learn` · `pandas` · `Matplotlib` · `Jupyter Notebook`
 
 
 
