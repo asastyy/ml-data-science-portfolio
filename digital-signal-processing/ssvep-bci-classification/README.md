@@ -4,9 +4,11 @@ EEG-based target classification for a Steady-State Visual Evoked Potential (SSVE
 
 The project compares frequency-recognition methods for SSVEP signals and evaluates how decision window length affects classification accuracy.
 
-## Tech Stack
+
 
 **Python** · **NumPy** · **SciPy** · **MNE** · **scikit-learn** · **pandas** · **Matplotlib** · **Jupyter Notebook**
+
+
 
 ## Highlights
 
