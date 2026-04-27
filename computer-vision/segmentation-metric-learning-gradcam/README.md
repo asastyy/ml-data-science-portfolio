@@ -90,9 +90,11 @@ RetinaNet-style detector оказался более интерпретируе�
 
 ## References
 
-- [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002)
-- [End-to-End Object Detection with Transformers](https://arxiv.org/abs/2005.12872)
-- [Feature Pyramid Networks for Object Detection](https://arxiv.org/abs/1612.03144)
-- [torchvision Object Detection Finetuning Tutorial](https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html)
-- [torchvision Detection Models](https://pytorch.org/vision/stable/models.html#object-detection)
-- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
+- [Focal Loss for Dense Object Detection / RetinaNet](https://arxiv.org/pdf/1708.02002.pdf)
+- [Feature Pyramid Networks for Object Detection](https://arxiv.org/pdf/1612.03144.pdf)
+- [RetinaNet explained and demystified](https://blog.zenggyu.com/en/post/2018-12-05/retinanet-explained-and-demystified/)
+- [Open Images Dataset](https://storage.googleapis.com/openimages/web/index.html)
+- [torchvision transforms](https://pytorch.org/vision/stable/transforms.html)
+- [torchvision detection models](https://pytorch.org/vision/stable/models.html)
+- [Object Detection on COCO — Papers with Code](https://paperswithcode.com/sota/object-detection-on-coco)
+- [Hugging Face Computer Vision Course: DETR](https://huggingface.co/learn/computer-vision-course/unit3/vision-transformers/detr)
