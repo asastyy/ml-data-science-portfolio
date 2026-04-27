@@ -105,7 +105,7 @@ BLEU удобна для сравнения моделей машинного п
 
 При этом результат beam search следует интерпретировать осторожно: этот эксперимент обучался дольше остальных, поэтому улучшение связано не только с декодированием, но и с большим числом training steps.
 
-## Материалы
+## References
 
 - [Sequence to Sequence Learning with Neural Networks](https://arxiv.org/abs/1409.3215)
 - [Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)
