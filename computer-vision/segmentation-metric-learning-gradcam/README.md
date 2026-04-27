@@ -1,100 +1,98 @@
-# Semantic Segmentation, Metric Learning и Grad-CAM
+# Ball Object Detection with RetinaNet and DETR
 
-Проект объединяет три задачи компьютерного зрения: семантическую сегментацию, metric learning для поиска похожих изображений и интерпретацию модели с помощью Grad-CAM.
+Проект по детекции мячей на изображениях с использованием RetinaNet-style detector и fine-tuning DETR.
 
-Реализованы fine-tuning U-Net для сегментации, обучение embedding-модели для image retrieval, оценка качества поиска по retrieval-метрикам и визуальный анализ ошибок модели.
+В проекте реализованы ключевые компоненты object detection pipeline: генерация anchors, feature pyramid, classification/regression heads, focal loss, fine-tuning модели и визуальная оценка предсказаний.
 
-> **Стек:** `Python` · `PyTorch` · `PyTorch Lightning` · `segmentation-models-pytorch` · `torchvision` · `FAISS` · `pandas` · `NumPy` · `Matplotlib` · `Grad-CAM` · `Jupyter Notebook`
+> **Стек:** `Python` · `PyTorch` · `torchvision` · `NumPy` · `pandas` · `OpenCV` · `Matplotlib` · `PIL` · `Jupyter Notebook`
 
 ## Описание проекта
 
-В проекте реализованы несколько CV-пайплайнов:
+В проекте рассматривается задача локализации объекта класса **Ball** на изображениях.
 
-- подготовка данных для семантической сегментации;
-- fine-tuning предобученной U-Net модели;
-- сравнение BCE loss, Dice loss и расширенных аугментаций;
-- оценка сегментации с помощью mean IoU;
-- обучение embedding-модели для metric learning;
-- построение поиска похожих изображений через FAISS;
-- оценка retrieval-качества с помощью Precision@k, Recall@k и mAP@k;
-- визуализация областей внимания модели с помощью Grad-CAM.
+Реализованы и протестированы два подхода:
+
+- RetinaNet-style object detector;
+- DETR-based object detector.
+
+Основной пайплайн включает:
+
+- подготовку изображений и bounding boxes;
+- генерацию anchors;
+- построение Feature Pyramid Network;
+- реализацию classification и box regression heads;
+- использование focal loss для борьбы с дисбалансом классов;
+- fine-tuning модели на целевом датасете;
+- оценку качества детекции;
+- визуализацию bounding boxes и анализ ошибок.
 
 ## Данные
 
-Для сегментации используется **Pascal VOC** — датасет с изображениями объектов и пиксельными масками классов.
+Используется датасет изображений с разметкой объектов класса **Ball**.
 
-Для metric learning используется **CARS196** — датасет изображений автомобилей, часто применяемый для задач image retrieval и metric learning.
+Каждый объект размечен bounding box координатами.  
+Задача модели — определить наличие мяча на изображении и корректно локализовать его с помощью прямоугольной рамки.
 
-## Semantic Segmentation
+## Подход
 
-Для сегментации используется U-Net-based модель.  
-Основная задача — выделить объекты на изображении и оценить качество предсказанных масок.
+### RetinaNet-style detector
 
-Сравнивались несколько вариантов обучения:
+RetinaNet используется как основной detection-подход.
 
-| Эксперимент | mean IoU | Краткий вывод |
-|---|---:|---|
-| Pretrained U-Net до fine-tuning | 0.11 | Модель почти не выделяла нужные области без дообучения на целевом датасете. |
-| BCE + default augmentations | 0.74 | Fine-tuning резко улучшил качество сегментации. |
-| BCE + extended augmentations | 0.75 | Дополнительные аугментации дали небольшой, но стабильный прирост. |
-| BCE + Dice + extended augmentations | 0.76 | Лучший результат за счёт сочетания BCE, Dice loss и расширенных аугментаций. |
+В рамках проекта реализуются и применяются ключевые элементы RetinaNet:
 
-## Metric Learning
+- backbone для извлечения признаков;
+- Feature Pyramid Network для работы с объектами разного масштаба;
+- anchors разных размеров и пропорций;
+- classification head для предсказания класса;
+- regression head для уточнения координат bounding boxes;
+- focal loss для снижения влияния easy negative examples.
 
-Для image retrieval обучается модель, которая переводит изображения в embedding-пространство.  
-Идея состоит в том, чтобы изображения одного класса находились ближе друг к другу, а изображения разных классов — дальше.
+### DETR fine-tuning
 
-В качестве backbone используется ResNet-based модель. Для обучения применяются metric learning loss-функции, включая ArcFace / Center Loss подходы.
+Дополнительно проводится эксперимент с **DETR** — transformer-based моделью для object detection.
 
-Для поиска похожих изображений используется **FAISS**.
+DETR рассматривает детекцию как задачу прямого предсказания множества объектов и не требует ручной генерации anchors.  
+В проекте модель дообучается на задаче детекции мячей и сравнивается с RetinaNet-style подходом по визуальному качеству предсказаний.
 
-## Retrieval Evaluation
+## Оценка качества
 
-Качество поиска похожих изображений оценивается с помощью Precision@k, Recall@k и mAP@k.
+Качество object detection оценивается по корректности локализации объекта и визуальному анализу предсказанных bounding boxes.
 
-| k | Precision@k | Recall@k | mAP@k |
-|---:|---:|---:|---:|
-| 1 | 0.7686 | 0.0238 | 0.7686 |
-| 5 | 0.7260 | 0.1121 | 0.7065 |
-| 10 | 0.6885 | 0.2124 | 0.6645 |
+Основной фокус сделан на:
 
-Модель показывает высокую точность на ближайших соседях: Precision@1 достигает **0.7686**.  
-При увеличении k recall растёт, так как среди большего числа найденных изображений появляется больше релевантных объектов.
-
-## Grad-CAM
-
-Grad-CAM используется для визуальной интерпретации работы модели.
-
-С помощью heatmap-визуализаций анализируется, на какие области изображения модель обращает внимание при принятии решения. Это помогает находить ошибки, связанные с фоном, нерелевантными деталями или недостаточной локализацией объекта.
+- совпадении предсказанной рамки с истинной разметкой;
+- наличии false positives;
+- пропущенных объектах;
+- ошибках на визуально похожих круглых объектах, бликах и сложном фоне.
 
 ## Результаты
 
-Основные результаты проекта:
+RetinaNet-style detector показал устойчивое качество на задаче локализации мячей и корректно находил объект на большинстве визуальных примеров.
 
-- fine-tuning U-Net повысил mean IoU с **0.11** до **0.74**;
-- лучшая segmentation-конфигурация достигла mean IoU **0.76**;
-- расширенные аугментации и Dice loss дали дополнительный прирост качества;
-- metric learning модель достигла **Precision@1 = 0.7686**;
-- FAISS позволил реализовать быстрый поиск похожих изображений в embedding-пространстве;
-- Grad-CAM помог визуально проанализировать, какие области изображения влияют на предсказания модели.
+DETR также смог адаптироваться к задаче после fine-tuning, однако на отдельных изображениях модель была чувствительна к визуально похожим круглым объектам и бликам.
+
+Основные наблюдения:
+
+- RetinaNet-style подход хорошо подходит для задачи с небольшим числом классов и явно размеченными bounding boxes;
+- focal loss помогает уменьшить влияние дисбаланса между объектом и фоном;
+- Feature Pyramid Network улучшает работу с объектами разного масштаба;
+- DETR удобен как anchor-free альтернатива, но требует аккуратного fine-tuning и достаточного числа обучающих примеров;
+- визуальный анализ предсказаний важен для понимания ошибок object detection модели.
 
 ## Финальный вывод
 
-В проекте показаны три важных направления компьютерного зрения: сегментация, поиск похожих изображений и интерпретация моделей.
+В проекте реализован полный object detection pipeline для задачи детекции мячей.
 
-Лучший результат в задаче сегментации был получен при использовании BCE + Dice loss и расширенных аугментаций — mean IoU **0.76**. В задаче metric learning модель показала хорошее качество ближайшего поиска: Precision@1 составил **0.7686**.
+RetinaNet-style detector оказался более интерпретируемым и контролируемым за счёт явной работы с anchors, heads и loss-функцией. DETR показал себя как современная anchor-free альтернатива, но оказался более чувствительным к качеству fine-tuning и визуально похожим объектам.
 
-Проект демонстрирует полный CV-пайплайн: от подготовки данных и обучения моделей до оценки качества, retrieval-поиска и визуального анализа ошибок.
+Проект демонстрирует ключевые навыки в computer vision: подготовку detection-датасета, работу с bounding boxes, реализацию компонентов RetinaNet, fine-tuning object detection моделей и анализ ошибок на изображениях.
 
 ## References
 
-- [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597)
-- [Pascal VOC Dataset](http://host.robots.ox.ac.uk/pascal/VOC/)
-- [CARS196 Dataset](https://ai.stanford.edu/~jkrause/cars/car_dataset.html)
-- [ArcFace: Additive Angular Margin Loss for Deep Face Recognition](https://arxiv.org/abs/1801.07698)
-- [A Discriminative Feature Learning Approach for Deep Face Recognition / Center Loss](https://arxiv.org/abs/1707.07391)
-- [FAISS: Facebook AI Similarity Search](https://github.com/facebookresearch/faiss)
-- [Grad-CAM: Visual Explanations from Deep Networks](https://arxiv.org/abs/1610.02391)
-- [pytorch-grad-cam](https://github.com/jacobgil/pytorch-grad-cam)
-- [PyTorch Lightning Documentation](https://lightning.ai/docs/pytorch/stable/)
-- [segmentation-models-pytorch](https://github.com/qubvel-org/segmentation_models.pytorch)
+- [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002)
+- [End-to-End Object Detection with Transformers](https://arxiv.org/abs/2005.12872)
+- [Feature Pyramid Networks for Object Detection](https://arxiv.org/abs/1612.03144)
+- [torchvision Object Detection Finetuning Tutorial](https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html)
+- [torchvision Detection Models](https://pytorch.org/vision/stable/models.html#object-detection)
+- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
